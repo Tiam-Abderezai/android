@@ -56,7 +56,6 @@ import com.owncloud.android.BuildConfig
 import com.owncloud.android.MainApp
 import com.owncloud.android.R
 import com.owncloud.android.authentication.BiometricManager
-import com.owncloud.android.presentation.ui.security.PassCodeManager
 import com.owncloud.android.authentication.PatternManager
 import com.owncloud.android.databinding.ActivityMainBinding
 import com.owncloud.android.datamodel.FileDataStorageManager
@@ -82,6 +81,7 @@ import com.owncloud.android.presentation.manager.DOWNLOAD_ADDED_MESSAGE
 import com.owncloud.android.presentation.manager.DOWNLOAD_FINISH_MESSAGE
 import com.owncloud.android.presentation.ui.files.operations.FileOperation
 import com.owncloud.android.presentation.ui.files.operations.FileOperationViewModel
+import com.owncloud.android.presentation.ui.security.PassCodeManager
 import com.owncloud.android.syncadapter.FileSyncAdapter
 import com.owncloud.android.ui.errorhandling.ErrorMessageAdapter
 import com.owncloud.android.ui.fragment.FileDetailFragment
@@ -89,22 +89,18 @@ import com.owncloud.android.ui.fragment.FileFragment
 import com.owncloud.android.ui.fragment.OCFileListFragment
 import com.owncloud.android.ui.fragment.TaskRetainerFragment
 import com.owncloud.android.ui.helpers.FilesUploadHelper
-import com.owncloud.android.ui.helpers.UriUploader
 import com.owncloud.android.ui.preview.PreviewAudioFragment
 import com.owncloud.android.ui.preview.PreviewImageActivity
 import com.owncloud.android.ui.preview.PreviewImageFragment
 import com.owncloud.android.ui.preview.PreviewTextFragment
 import com.owncloud.android.ui.preview.PreviewVideoActivity
 import com.owncloud.android.ui.preview.PreviewVideoFragment
-import com.owncloud.android.usecases.UploadBehavior
-import com.owncloud.android.usecases.UploadEnqueuedBy
-import com.owncloud.android.usecases.UploadFileUseCase
+import com.owncloud.android.usecases.UploadFileFromSAFUseCase
 import com.owncloud.android.usecases.transfers.DownloadFileUseCase
 import com.owncloud.android.utils.DisplayUtils
 import com.owncloud.android.utils.Extras
 import com.owncloud.android.utils.PermissionUtil
 import com.owncloud.android.utils.PreferenceUtils
-import com.owncloud.android.workers.UploadFileFromContentUriWorker.Companion.TRANSFER_TAG_MANUAL_UPLOAD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -599,6 +595,7 @@ class FileDisplayActivity : FileActivity(), FileFragment.ContainerActivity, OnEn
     }
 
     private fun requestUploadOfContentFromApps(contentIntent: Intent?, resultCode: Int) {
+        val uploadFileUseCase by inject<UploadFileFromSAFUseCase>()
 
         val streamsToUpload = ArrayList<Uri>()
 
@@ -618,20 +615,12 @@ class FileDisplayActivity : FileActivity(), FileFragment.ContainerActivity, OnEn
         val currentDir = currentDir
         val remotePath = currentDir?.remotePath ?: OCFile.ROOT_PATH
 
-        val uploadFileUseCase by inject<UploadFileUseCase>()
-        streamsToUpload.forEach { uri ->
-            val uploadFileUseCaseParams = UploadFileUseCase.Params(
-                accountName = account.name,
-                behavior = UploadBehavior.fromLegacyLocalBehavior(behaviour),
-                chargingOnly = false,
-                contentUri = uri,
-                enqueuedBy = UploadEnqueuedBy.ENQUEUED_BY_USER,
-                uploadSourceTag = TRANSFER_TAG_MANUAL_UPLOAD,
-                uploadFolderPath = remotePath,
-                wifiOnly = false
-            )
-            uploadFileUseCase.execute(uploadFileUseCaseParams)
-        }
+        val uploadFileUseCaseParams = UploadFileFromSAFUseCase.Params(
+            accountName = account.name,
+            listOfContentUris = streamsToUpload,
+            uploadFolderPath = remotePath,
+        )
+        uploadFileUseCase.execute(uploadFileUseCaseParams)
 
 //        val uploader = UriUploader(
 //            this,
