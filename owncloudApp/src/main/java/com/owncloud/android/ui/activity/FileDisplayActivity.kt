@@ -67,7 +67,6 @@ import com.owncloud.android.extensions.showErrorInSnackbar
 import com.owncloud.android.extensions.showMessageInSnackbar
 import com.owncloud.android.files.services.FileUploader
 import com.owncloud.android.files.services.FileUploader.FileUploaderBinder
-import com.owncloud.android.files.services.TransferRequester
 import com.owncloud.android.lib.common.authentication.OwnCloudBearerCredentials
 import com.owncloud.android.lib.common.operations.RemoteOperation
 import com.owncloud.android.lib.common.operations.RemoteOperationResult
@@ -75,7 +74,6 @@ import com.owncloud.android.lib.common.operations.RemoteOperationResult.ResultCo
 import com.owncloud.android.lib.resources.status.OwnCloudVersion
 import com.owncloud.android.operations.RefreshFolderOperation
 import com.owncloud.android.operations.SynchronizeFileOperation
-import com.owncloud.android.operations.UploadFileOperation
 import com.owncloud.android.presentation.UIResult
 import com.owncloud.android.presentation.manager.DOWNLOAD_ADDED_MESSAGE
 import com.owncloud.android.presentation.manager.DOWNLOAD_FINISH_MESSAGE
@@ -548,7 +546,7 @@ class FileDisplayActivity : FileActivity(), FileFragment.ContainerActivity, OnEn
                         capturedFilePaths: Array<String>
                     ) {
                         if (hasEnoughSpace) {
-                            requestUploadOfFilesFromFileSystem(capturedFilePaths, FileUploader.LOCAL_BEHAVIOUR_MOVE)
+                            requestUploadOfFilesFromFileSystem(capturedFilePaths, FileUploader.LEGACY_LOCAL_BEHAVIOUR_MOVE)
                         }
                     }
                 })
@@ -604,9 +602,9 @@ class FileDisplayActivity : FileActivity(), FileFragment.ContainerActivity, OnEn
         }
 
         val behaviour = if (resultCode == RESULT_OK_AND_MOVE)
-            FileUploader.LOCAL_BEHAVIOUR_MOVE
+            FileUploader.LEGACY_LOCAL_BEHAVIOUR_MOVE
         else
-            FileUploader.LOCAL_BEHAVIOUR_COPY
+            FileUploader.LEGACY_LOCAL_BEHAVIOUR_COPY
 
         val currentDir = currentDir
         val remotePath = currentDir?.remotePath ?: OCFile.ROOT_PATH
