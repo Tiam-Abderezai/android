@@ -258,6 +258,7 @@ class SettingsFragmentTest {
         )
     }
 
+    @Ignore("Flaky test")
     @Test
     fun privacyPolicyOpensPrivacyPolicyActivity() {
         launchTest(attachedAccount = false)
