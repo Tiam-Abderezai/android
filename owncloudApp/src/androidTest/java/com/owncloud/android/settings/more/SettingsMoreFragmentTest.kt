@@ -52,6 +52,7 @@ import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -214,6 +215,7 @@ class SettingsMoreFragmentTest {
         assertNull(prefImprint)
     }
 
+    @Ignore("Ignore intent tests temporary")
     @Test
     fun helpOpensNotEmptyUrl() {
         every { moreViewModel.getHelpUrl() } returns context.getString(R.string.url_help)
@@ -226,6 +228,7 @@ class SettingsMoreFragmentTest {
         intended(hasData(context.getString(R.string.url_help)))
     }
 
+    @Ignore("Ignore intent tests temporary")
     @Test
     fun syncOpensNotEmptyUrl() {
         every { moreViewModel.getSyncUrl() } returns context.getString(R.string.url_sync_calendar_contacts)
@@ -238,6 +241,7 @@ class SettingsMoreFragmentTest {
         intended(hasData(context.getString(R.string.url_sync_calendar_contacts)))
     }
 
+    @Ignore("Ignore intent tests temporary")
     @Test
     fun recommendOpensSender() {
         launchTest()
@@ -269,6 +273,7 @@ class SettingsMoreFragmentTest {
         )
     }
 
+    @Ignore("Ignore intent tests temporary")
     @Test
     fun feedbackOpensSender() {
         launchTest()
@@ -292,6 +297,7 @@ class SettingsMoreFragmentTest {
         )
     }
 
+    @Ignore("Ignore intent tests temporary")
     @Test
     fun imprintOpensUrl() {
         every { moreViewModel.getImprintUrl() } returns "https://owncloud.com/mobile"
